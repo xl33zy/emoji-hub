@@ -9,4 +9,7 @@ backend/.env
 
 # OS
 .DS_Store
-Thumbs.db.idea/
+Thumbs.db
+
+# IDE
+.idea/
