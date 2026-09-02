@@ -6,6 +6,7 @@ interface UseEmojisParams {
     search?: string
     category?: string
     sort?: SortOption
+    enabled?: boolean
 }
 
 interface UseEmojisResult {
@@ -13,13 +14,17 @@ interface UseEmojisResult {
     loading: boolean
     error: string | null
 }
-
-export function useEmojis({ search, category, sort }: UseEmojisParams): UseEmojisResult {
+export function useEmojis({ search, category, sort, enabled = true }: UseEmojisParams): UseEmojisResult {
     const [emojis, setEmojis] = useState<Emoji[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        if (!enabled) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setLoading(false)
+            return
+        }
         const controller = new AbortController()
 
         const params = new URLSearchParams()
@@ -46,7 +51,6 @@ export function useEmojis({ search, category, sort }: UseEmojisParams): UseEmoji
             })
 
         return () => controller.abort()
-    }, [search, category, sort])
-
+    }, [search, category, sort, enabled])
     return { emojis, loading, error }
 }

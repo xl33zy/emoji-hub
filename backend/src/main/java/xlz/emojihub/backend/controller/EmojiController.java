@@ -25,6 +25,11 @@ public class EmojiController {
         return emojiService.findEmojis(search, category, sort);
     }
 
+    @GetMapping("/api/emojis/random")
+    public EmojiDto getRandomEmoji() {
+        return emojiService.getRandom();
+    }
+
     @GetMapping("/api/emojis/{slug}")
     public EmojiDto getEmoji(@PathVariable String slug) {
         return emojiService.findBySlug(slug);

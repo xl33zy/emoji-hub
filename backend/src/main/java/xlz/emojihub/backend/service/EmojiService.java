@@ -7,6 +7,7 @@ import xlz.emojihub.backend.dto.EmojiDto;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class EmojiService {
@@ -44,6 +45,12 @@ public class EmojiService {
                              .filter(e -> e.slug().equals(slug))
                              .findFirst()
                              .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Emoji not found: " + slug));
+    }
+
+    public EmojiDto getRandom() {
+        List<EmojiDto> emojis = emojiHubClient.getAllEmojis();
+        int index = ThreadLocalRandom.current().nextInt(emojis.size());
+        return emojis.get(index);
     }
 
     public List<String> getCategories() {

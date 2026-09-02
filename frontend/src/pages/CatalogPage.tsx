@@ -38,7 +38,7 @@ export function CatalogPage() {
 
     return (
         <div className="mx-auto max-w-[1180px] px-4 py-10 sm:px-8">
-            <h1 className="font-display text-3xl text-ink">Catalog</h1>
+            <h1 className="font-index text-3xl font-bold tracking-tight text-ink">Catalog</h1>
             <p className="mt-2 text-ink-soft">
                 Over <span className="font-medium text-ink">{emojis.length}</span> emoji from the open EmojiHub library
             </p>
@@ -60,7 +60,7 @@ export function CatalogPage() {
             {!error && (
                 <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(228px,1fr))] gap-[18px]">
                     {visibleEmojis.map((emoji) => (
-                        <EmojiCard key={emoji.slug} emoji={emoji} categories={categories} />
+                        <EmojiCard key={emoji.slug} emoji={emoji} categories={categories} from="catalog" />
                     ))}
                 </div>
             )}

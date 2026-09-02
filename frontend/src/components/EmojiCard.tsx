@@ -1,19 +1,23 @@
 import { Link } from 'react-router-dom'
 import type { Emoji } from '../types/emoji'
 import { getCategoryAccent } from '../lib/categoryAccent'
+import type { DetailOrigin } from '../types/navigation'
 
 interface EmojiCardProps {
     emoji: Emoji
     categories: string[]
+    size?: 'default' | 'large'
+    from?: DetailOrigin
 }
 
-export function EmojiCard({ emoji, categories }: EmojiCardProps) {
+export function EmojiCard({ emoji, categories, size = 'default', from }: EmojiCardProps) {
     const accent = getCategoryAccent(emoji.category, categories)
+    const isLarge = size === 'large'
 
     return (
         <article
             style={{ '--card-accent': accent } as React.CSSProperties}
-            className="group flex flex-col rounded-[10px] border-[1.5px] border-line bg-paper-raised p-4 transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:border-[var(--card-accent)] hover:shadow-[4px_4px_0_var(--card-accent)]"
+            className={`group flex flex-col rounded-[10px] border-[1.5px] border-line bg-paper-raised transition-all hover:-translate-x-[3px] hover:-translate-y-[3px] hover:border-[var(--card-accent)] hover:shadow-[4px_4px_0_var(--card-accent)] ${isLarge ? 'p-5' : 'p-4'}`}
         >
             <div className="mb-1.5 flex justify-end">
                 {/* TODO(Срез 4): fav-btn, useFavorites вместо статичной заглушки */}
@@ -24,7 +28,11 @@ export function EmojiCard({ emoji, categories }: EmojiCardProps) {
                 </button>
             </div>
 
-            <Link to={`/emoji/${emoji.slug}`} className="mb-3 block text-left text-[42px] leading-none">
+            <Link
+                to={`/emoji/${emoji.slug}`}
+                state={from ? { from } : undefined}
+                className={`mb-3 block text-left leading-none ${isLarge ? 'text-[72px]' : 'text-[42px]'}`}
+            >
                 {emoji.emoji}
             </Link>
 
