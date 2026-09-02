@@ -35,7 +35,6 @@ export function useEmojis({ search, category, sort, enabled = true }: UseEmojisP
         const query = params.toString()
         const path = query ? `/api/emojis?${query}` : '/api/emojis'
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true)
         setError(null)
 

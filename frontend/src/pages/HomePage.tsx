@@ -27,14 +27,14 @@ export function HomePage() {
                     <div className="flex-[1_1_380px]">
                         <p className="mb-3 font-mono text-[13px] text-ink-soft">
                             <span className="text-ink">{stats.total > 0 ? stats.total.toLocaleString('en-US') : '—'}</span>
-                            {' '}specimens · {stats.categories > 0 ? stats.categories : '—'} categories · open EmojiHub data
+                            {' '}entries · {stats.categories > 0 ? stats.categories : '—'} categories
                         </p>
                         <h1 className="mb-4 max-w-[14ch] font-index text-[clamp(30px,4vw,46px)] font-bold leading-[1.08] tracking-tight text-ink">
                             A field guide to every emoji
                         </h1>
                         <p className="mb-5 max-w-[48ch] text-base text-ink-soft">
-                            Emoji Hub catalogs, tags, and cross-references every specimen from the open EmojiHub library —
-                            search it directly, or just tell us how you feel.
+                            Every emoji, catalogued, tagged, and ready to search. Browse the collection, or tell us
+                            how you're feeling and we'll point you to the one that fits.
                         </p>
                         <div className="flex flex-wrap gap-3">
                             <Link
@@ -55,7 +55,7 @@ export function HomePage() {
                     <div className="w-[300px] flex-none">
                         <div className="mb-2 flex items-center justify-between">
                             <span className="font-mono text-[11px] uppercase tracking-wide text-ink-soft">
-                                Specimen of the day
+                                Emoji of the day
                             </span>
                             <button
                                 type="button"
@@ -93,10 +93,10 @@ export function HomePage() {
 
             <div className="mx-auto max-w-[1180px] border-y border-line px-4 sm:px-8">
                 <div className="flex divide-x divide-line">
-                    <Fact value={stats.total} label="catalogued specimens" />
+                    <Fact value={stats.total} label="catalogued emoji" />
                     <Fact value={stats.categories} label="categories" />
                     <Fact value={stats.groups} label="groups" />
-                    <Fact value={stats.multiCodepoint} label="multi-codepoint variants" />
+                    <Fact value={stats.multiCodepoint} label="tone & gender variants" />
                 </div>
             </div>
 
@@ -108,7 +108,7 @@ export function HomePage() {
                             key={cat}
                             to={`/catalog?category=${encodeURIComponent(cat)}`}
                             style={{ borderColor: getCategoryAccent(cat, categories) }}
-                            className="rounded-full border px-3.5 py-1.5 text-[13.5px] text-ink-soft transition-colors hover:text-ink"
+                            className="rounded-full border bg-paper-raised px-3.5 py-1.5 text-[13.5px] text-ink-soft transition-colors hover:text-ink"
                         >
                             {cat}
                         </Link>

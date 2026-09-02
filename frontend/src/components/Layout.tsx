@@ -11,7 +11,7 @@ export function Layout() {
             <footer className="border-t border-line">
                 <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-8">
                     <p className="text-[13px] text-ink-soft">
-                        <span className="font-medium text-ink">emojihub</span> — a learning project built on the open EmojiHub API
+                        <span className="font-medium text-ink">emojihub</span> - a field guide powered by the open EmojiHub API
                     </p>
                     <nav className="flex gap-5 text-[13px] text-ink-soft" aria-label="Footer navigation">
                         <Link to="/catalog" className="hover:text-ink">Catalog</Link>

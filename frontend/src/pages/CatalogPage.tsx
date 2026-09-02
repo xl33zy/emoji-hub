@@ -7,6 +7,7 @@ import { SortControls } from '../components/SortControls'
 import { CategoryFilter } from '../components/CategoryFilter'
 import { EmojiCard } from '../components/EmojiCard'
 import type { SortOption } from '../types/emoji'
+import { PageIntro } from '../components/PageIntro'
 
 const PAGE_SIZE = 30
 
@@ -38,12 +39,11 @@ export function CatalogPage() {
 
     return (
         <div className="mx-auto max-w-[1180px] px-4 py-10 sm:px-8">
-            <h1 className="font-index text-3xl font-bold tracking-tight text-ink">Catalog</h1>
-            <p className="mt-2 text-ink-soft">
-                Over <span className="font-medium text-ink">{emojis.length}</span> emoji from the open EmojiHub library
-            </p>
+            <PageIntro title="Emoji Catalog">
+                Over <span className="font-mono tabular-nums text-ink">{emojis.length}</span> emoji - search, sort, and save your favorites. Click any one to open its page.
+            </PageIntro>
 
-            <div className="mt-6 flex flex-wrap items-end gap-4">
+            <div className="flex flex-wrap items-end gap-4">
                 <SearchBar value={search} onChange={(v) => updateParam('search', v || null)} />
                 <SortControls
                     value={sort}

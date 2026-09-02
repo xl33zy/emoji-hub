@@ -1,1 +1,1 @@
-export type DetailOrigin = 'home' | 'catalog'
+export type DetailOrigin = 'home' | 'catalog' | 'favorites'

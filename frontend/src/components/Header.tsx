@@ -1,6 +1,9 @@
 import { NavLink } from 'react-router-dom'
+import { useFavorites } from '../hooks/useFavorites'
+import { ThemeToggle } from './ThemeToggle'
 
 export function Header() {
+    const { count } = useFavorites()
     return (
         <header className="sticky top-0 z-20 border-b border-line bg-paper">
             <div className="mx-auto flex min-h-16 max-w-[1180px] items-center gap-6 px-4 sm:px-8">
@@ -18,7 +21,11 @@ export function Header() {
                     <NavLink
                         to="/favorites"
                         aria-label="Favorites"
-                        className="inline-flex items-center gap-1.5 text-sm text-ink-soft"
+                        className={({ isActive }) =>
+                            `inline-flex items-center gap-1.5 border-b-2 pb-1 text-sm ${
+                                isActive ? 'border-accent-crimson text-ink' : 'border-transparent text-ink-soft'
+                            }`
+                        }
                     >
                         <svg
                             viewBox="0 0 24 24"
@@ -31,17 +38,10 @@ export function Header() {
                         >
                             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
                         </svg>
-                        {/* TODO(Срез 4): подключить к useFavorites вместо статичного 0 */}
-                        <span>0</span>
+                        <span>{count}</span>
                     </NavLink>
 
-                    <button
-                        type="button"
-                        aria-label="Toggle theme"
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink"
-                    >
-                        {/* TODO(Срез 4): иконка + логика переключения темы */}
-                    </button>
+                    <ThemeToggle />
                 </div>
             </div>
         </header>

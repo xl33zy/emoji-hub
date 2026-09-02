@@ -4,9 +4,9 @@ import { useMood } from '../hooks/useMood'
 import { useCategories } from '../hooks/useCategories'
 import { useEmojis } from '../hooks/useEmojis'
 import { useToast } from '../hooks/useToast'
+import { useFavorites } from '../hooks/useFavorites'
 import { getCategoryAccent } from '../lib/categoryAccent'
 import { CopyButton } from '../components/CopyButton'
-import { Toast } from '../components/Toast'
 import type { DetailOrigin } from '../types/navigation'
 
 export function EmojiDetailPage() {
@@ -18,13 +18,15 @@ export function EmojiDetailPage() {
         category: emoji?.category,
         enabled: Boolean(emoji),
     })
-    const { message: toastMessage, showToast } = useToast()
+    const { showToast } = useToast()
+    const { isFavorite, toggleFavorite } = useFavorites()
     const location = useLocation()
     const navigate = useNavigate()
 
     const from: DetailOrigin = (location.state as { from?: DetailOrigin } | null)?.from ?? 'catalog'
-    const backLabel = from === 'home' ? 'Back to home' : 'Back to catalog'
-    const backFallbackPath = from === 'home' ? '/' : '/catalog'
+    const backLabel =
+        from === 'home' ? 'Back to home' : from === 'favorites' ? 'Back to favorites' : 'Back to catalog'
+    const backFallbackPath = from === 'home' ? '/' : from === 'favorites' ? '/favorites' : '/catalog'
 
     function handleBack() {
         if (location.key === 'default') {
@@ -66,6 +68,7 @@ export function EmojiDetailPage() {
     }
 
     const accent = getCategoryAccent(emoji.category, categories)
+    const favorited = isFavorite(emoji.slug)
     const related = sameCategoryEmojis.filter((e) => e.slug !== emoji.slug).slice(0, 4)
 
     return (
@@ -99,9 +102,22 @@ export function EmojiDetailPage() {
                                     <path d="M5 15V5a2 2 0 0 1 2-2h10" />
                                 </svg>
                             </CopyButton>
-                            {/* TODO(Срез 4): fav-btn, useFavorites вместо статичной заглушки — тот же паттерн, что в EmojiCard */}
-                            <button type="button" aria-label={`Add to favorites: ${emoji.displayName}`} className="p-1 text-ink-soft">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-[19px] w-[19px]">
+                            <button
+                                type="button"
+                                onClick={() => toggleFavorite(emoji.slug)}
+                                aria-pressed={favorited}
+                                aria-label={`${favorited ? 'Remove from favorites' : 'Add to favorites'}: ${emoji.displayName}`}
+                                className={`p-1 transition-colors hover:text-accent-crimson ${favorited ? 'text-accent-crimson' : 'text-ink-soft'}`}
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill={favorited ? 'currentColor' : 'none'}
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-[19px] w-[19px]"
+                                >
                                     <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
                                 </svg>
                             </button>
@@ -129,7 +145,7 @@ export function EmojiDetailPage() {
 
                 <div className="min-w-0 flex-[1_1_380px]">
                     <p className="mb-1 font-mono text-xs text-ink-soft">{emoji.slug}</p>
-                    <h1 className="mb-3 font-display text-[clamp(26px,3vw,34px)] font-semibold tracking-tight text-ink">
+                    <h1 className="mb-3 font-display text-[clamp(26px,3vw,34px)] font-semibold capitalize tracking-tight text-ink">
                         {emoji.displayName}
                     </h1>
                     <div className="mb-6 flex flex-row items-center gap-2.5">
@@ -165,7 +181,7 @@ export function EmojiDetailPage() {
                                         key={e.slug}
                                         to={`/emoji/${e.slug}`}
                                         state={{ from }}
-                                        className="flex items-center gap-2 rounded-full border border-line bg-paper-raised py-1.5 pl-2 pr-3.5 text-[13.5px] text-ink transition-colors hover:border-ink-soft"
+                                        className="flex items-center gap-2 rounded-full border border-line bg-paper-raised py-1.5 pl-2 pr-3.5 text-[13.5px] text-ink capitalize transition-colors hover:border-ink-soft"
                                     >
                                         <span className="text-xl leading-none">{e.emoji}</span>
                                         {e.displayName}
@@ -176,8 +192,6 @@ export function EmojiDetailPage() {
                     </div>
                 </div>
             </div>
-
-            <Toast message={toastMessage} />
         </div>
     )
 }

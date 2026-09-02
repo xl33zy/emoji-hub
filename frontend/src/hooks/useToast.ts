@@ -1,14 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
+import { useContext } from 'react'
+import { ToastContext } from '../context/ToastContext'
 
-export function useToast(duration = 2000) {
-    const [message, setMessage] = useState<string | null>(null)
-    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-    const showToast = useCallback((text: string) => {
-        if (timeoutRef.current) clearTimeout(timeoutRef.current)
-        setMessage(text)
-        timeoutRef.current = setTimeout(() => setMessage(null), duration)
-    }, [duration])
-
-    return { message, showToast }
+export function useToast() {
+    const context = useContext(ToastContext)
+    if (!context) {
+        throw new Error('useToast must be used within a ToastProvider')
+    }
+    return context
 }
