@@ -1,0 +1,8 @@
+export function CatalogPage() {
+    return (
+        <div className="mx-auto max-w-[1180px] px-4 py-10 sm:px-8">
+            <h1 className="font-display text-3xl text-ink">Catalog</h1>
+            {/* TODO: список эмодзи, поиск, сортировка, фильтр по категориям */}
+        </div>
+    )
+}

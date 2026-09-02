@@ -7,3 +7,6 @@ server:
 
 emojihub:
   base-url: ${EMOJIHUB_BASE_URL:https://emojihub.yurace.pro/api}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGIN:http://localhost:5173}
