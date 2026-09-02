@@ -3,12 +3,13 @@ import type { SortOption } from '../types/emoji'
 interface SortControlsProps {
     value: SortOption
     onChange: (value: SortOption) => void
+    disableCategorySort?: boolean
 }
 
 const CHEVRON =
     `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%2363665A" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>')`
 
-export function SortControls({ value, onChange }: SortControlsProps) {
+export function SortControls({ value, onChange, disableCategorySort }: SortControlsProps) {
     return (
         <div className="flex flex-col gap-1.5">
             <label htmlFor="sort" className="text-xs text-ink-soft">Sort by</label>
@@ -20,7 +21,9 @@ export function SortControls({ value, onChange }: SortControlsProps) {
                 className="appearance-none rounded-[8px] border border-line bg-paper-raised py-2.5 pl-3 pr-8 font-body text-[15px] text-ink"
             >
                 <option value="name">Name, A→Z</option>
-                <option value="category">Category</option>
+                <option value="category" disabled={disableCategorySort} title={disableCategorySort ? 'Not useful within a single category' : undefined}>
+                    Category
+                </option>
             </select>
         </div>
     )

@@ -1,6 +1,7 @@
 package xlz.emojihub.backend.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import xlz.emojihub.backend.dto.EmojiDto;
@@ -22,6 +23,11 @@ public class EmojiController {
             @RequestParam(required = false) String sort
     ) {
         return emojiService.findEmojis(search, category, sort);
+    }
+
+    @GetMapping("/api/emojis/{slug}")
+    public EmojiDto getEmoji(@PathVariable String slug) {
+        return emojiService.findBySlug(slug);
     }
 
     @GetMapping("/api/categories")

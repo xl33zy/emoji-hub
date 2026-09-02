@@ -45,7 +45,11 @@ export function CatalogPage() {
 
             <div className="mt-6 flex flex-wrap items-end gap-4">
                 <SearchBar value={search} onChange={(v) => updateParam('search', v || null)} />
-                <SortControls value={sort} onChange={(v) => updateParam('sort', v === 'name' ? null : v)} />
+                <SortControls
+                    value={sort}
+                    onChange={(v) => updateParam('sort', v === 'name' ? null : v)}
+                    disableCategorySort={category !== null}
+                />
             </div>
             <div className="mt-4">
                 <CategoryFilter categories={categories} value={category} onChange={(v) => updateParam('category', v)} />
