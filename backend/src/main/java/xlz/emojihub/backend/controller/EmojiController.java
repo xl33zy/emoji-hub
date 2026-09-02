@@ -23,4 +23,9 @@ public class EmojiController {
     ) {
         return emojiService.findEmojis(search, category, sort);
     }
+
+    @GetMapping("/api/categories")
+    public List<String> getCategories() {
+        return emojiService.getCategories();
+    }
 }

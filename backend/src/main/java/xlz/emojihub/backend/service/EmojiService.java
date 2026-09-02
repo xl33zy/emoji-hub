@@ -36,4 +36,12 @@ public class EmojiService {
 
         return emojis.stream().sorted(comparator).toList();
     }
+
+    public List<String> getCategories() {
+        return emojiHubClient.getAllEmojis().stream()
+                             .map(EmojiDto::category)
+                             .distinct()
+                             .sorted()
+                             .toList();
+    }
 }
