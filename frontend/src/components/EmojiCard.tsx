@@ -17,7 +17,7 @@ export function EmojiCard({ emoji, categories }: EmojiCardProps) {
         >
             <div className="mb-1.5 flex justify-end">
                 {/* TODO(Срез 4): fav-btn, useFavorites вместо статичной заглушки */}
-                <button type="button" aria-label={`Add to favorites: ${emoji.name}`} className="p-0.5 text-ink-soft">
+                <button type="button" aria-label={`Add to favorites: ${emoji.displayName}`} className="p-0.5 text-ink-soft">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
                         <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
                     </svg>
@@ -28,7 +28,7 @@ export function EmojiCard({ emoji, categories }: EmojiCardProps) {
                 {emoji.emoji}
             </Link>
 
-            <h3 className="mb-2 font-display text-lg font-semibold tracking-tight text-ink">{emoji.name}</h3>
+            <h3 className="mb-2 font-display text-lg font-semibold tracking-tight text-ink">{emoji.displayName}</h3>
 
             <div className="mb-3.5 flex flex-col gap-1">
                 <span

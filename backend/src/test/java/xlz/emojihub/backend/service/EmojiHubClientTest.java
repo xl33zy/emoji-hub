@@ -58,4 +58,23 @@ class EmojiHubClientTest {
 
         assertThat(slug).isEqualTo("airplane-arriving-airplane-arrival-travel-and-places");
     }
+
+    @Test
+    void splitsDisplayNameFromAlternativeName() {
+        EmojiHubApiEmoji raw = new EmojiHubApiEmoji(
+                "aubergine \u224a eggplant", "food and drink", "food vegetable",
+                List.of("&#127814;"), List.of("U+1F346"));
+        EmojiDto dto = EmojiHubClient.mapToDtos(List.of(raw)).get(0);
+        assertThat(dto.displayName()).isEqualTo("eggplant");
+        assertThat(dto.name()).isEqualTo("aubergine \u224a eggplant");
+    }
+
+    @Test
+    void displayNameEqualsNameWhenNoAlternative() {
+        EmojiHubApiEmoji raw = new EmojiHubApiEmoji(
+                "grinning face", "smileys and people", "face positive",
+                List.of("&#128512;"), List.of("U+1F600"));
+        EmojiDto dto = EmojiHubClient.mapToDtos(List.of(raw)).get(0);
+        assertThat(dto.displayName()).isEqualTo("grinning face");
+    }
 }

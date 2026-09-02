@@ -18,6 +18,7 @@ public class EmojiHubClient {
     private static final Pattern NUMERIC_ENTITY = Pattern.compile("&#(\\d+);");
     private static final Pattern NON_ALPHANUMERIC = Pattern.compile("[^a-z0-9]+");
     private static final Pattern EDGE_DASHES = Pattern.compile("^-+|-+$");
+    private static final String ALT_NAME_SEPARATOR = " ≊ ";
 
     private final RestClient emojiHubRestClient;
 
@@ -39,9 +40,10 @@ public class EmojiHubClient {
         List<EmojiDto> result = new ArrayList<>(raw.size());
         for (EmojiHubApiEmoji item : raw) {
             String slug = uniqueSlug(item.name(), item.category(), usedSlugs);
+            String displayName = displayName(item.name());
             String emoji = decodeHtmlCodes(item.htmlCode());
             String unicode = String.join(" ", item.unicode());
-            result.add(new EmojiDto(slug, item.name(), item.category(), item.group(), emoji, unicode));
+            result.add(new EmojiDto(slug, item.name(), displayName, item.category(), item.group(), emoji, unicode));
         }
         return result;
     }
@@ -61,6 +63,11 @@ public class EmojiHubClient {
         String lower = value.toLowerCase(Locale.ROOT);
         String replaced = NON_ALPHANUMERIC.matcher(lower).replaceAll("-");
         return EDGE_DASHES.matcher(replaced).replaceAll("");
+    }
+
+    private static String displayName(String name) {
+        int separatorIndex = name.indexOf(ALT_NAME_SEPARATOR);
+        return separatorIndex == -1 ? name : name.substring(separatorIndex + ALT_NAME_SEPARATOR.length()).trim();
     }
 
     private static String decodeHtmlCodes(List<String> htmlCodes) {
