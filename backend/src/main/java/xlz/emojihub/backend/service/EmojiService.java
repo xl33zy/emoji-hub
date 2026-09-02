@@ -1,6 +1,8 @@
 package xlz.emojihub.backend.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import xlz.emojihub.backend.dto.EmojiDto;
 import java.util.Comparator;
 import java.util.List;
@@ -35,6 +37,13 @@ public class EmojiService {
                 : Comparator.comparing(EmojiDto::name);
 
         return emojis.stream().sorted(comparator).toList();
+    }
+
+    public EmojiDto findBySlug(String slug) {
+        return emojiHubClient.getAllEmojis().stream()
+                             .filter(e -> e.slug().equals(slug))
+                             .findFirst()
+                             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Emoji not found: " + slug));
     }
 
     public List<String> getCategories() {

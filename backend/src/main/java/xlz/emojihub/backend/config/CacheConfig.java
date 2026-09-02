@@ -19,9 +19,12 @@ public class CacheConfig {
                 Caffeine.newBuilder()
                         .expireAfterWrite(Duration.ofHours(1))
                         .build());
-
+        CaffeineCache moodDescriptionCache = new CaffeineCache("moodDescription",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(Duration.ofDays(7))
+                        .build());
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(emojiListCache));
+        manager.setCaches(List.of(emojiListCache, moodDescriptionCache));
         return manager;
     }
 }

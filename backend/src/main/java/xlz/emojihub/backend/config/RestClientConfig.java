@@ -12,4 +12,13 @@ public class RestClientConfig {
                                   @Value("${emojihub.base-url}") String baseUrl) {
         return builder.baseUrl(baseUrl).build();
     }
+
+    @Bean
+    RestClient geminiRestClient(RestClient.Builder builder,
+                                @Value("${gemini.base-url}") String baseUrl,
+                                @Value("${gemini.api-key}") String apiKey) {
+        return builder.baseUrl(baseUrl)
+                      .defaultHeader("x-goog-api-key", apiKey)
+                      .build();
+    }
 }
