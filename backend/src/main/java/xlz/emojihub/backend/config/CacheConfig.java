@@ -17,7 +17,7 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCache emojiListCache = new CaffeineCache("emojiList",
                 Caffeine.newBuilder()
-                        .expireAfterWrite(Duration.ofHours(1))
+                        .expireAfterWrite(Duration.ofSeconds(10))
                         .build());
         CaffeineCache moodDescriptionCache = new CaffeineCache("moodDescription",
                 Caffeine.newBuilder()

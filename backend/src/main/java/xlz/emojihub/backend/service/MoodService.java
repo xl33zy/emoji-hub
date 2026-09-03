@@ -1,7 +1,10 @@
 package xlz.emojihub.backend.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.server.ResponseStatusException;
 import xlz.emojihub.backend.dto.EmojiDto;
 import xlz.emojihub.backend.dto.MoodDto;
@@ -14,6 +17,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MoodService {
     private final EmojiService emojiService;
@@ -26,8 +30,14 @@ public class MoodService {
 
     public MoodDto getMood(String slug) {
         EmojiDto emoji = emojiService.findBySlug(slug);
-        String mood = geminiClient.describeMood(emoji.displayName(), emoji.emoji());
-        return new MoodDto(mood);
+        try {
+            String mood = geminiClient.describeMood(emoji.displayName(), emoji.emoji());
+            return new MoodDto(mood);
+        } catch (ResourceAccessException | HttpServerErrorException e) {
+            log.warn("Gemini unavailable while describing mood for slug={}: {}", slug, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Mood description is temporarily unavailable, please try again shortly", e);
+        }
     }
 
     public MoodMatchResponseDto matchMood(String text) {
@@ -38,7 +48,15 @@ public class MoodService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "text must be at most 300 characters");
         }
 
-        List<MoodMatchSuggestion> suggestions = geminiClient.findMoodMatches(text, emojiService.getCategories());
+        List<MoodMatchSuggestion> suggestions;
+        try {
+            suggestions = geminiClient.findMoodMatches(text, emojiService.getCategories());
+        } catch (ResourceAccessException | HttpServerErrorException e) {
+            log.warn("Gemini unavailable while matching mood: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                    "Mood matching is temporarily unavailable, please try again shortly", e);
+        }
+
         List<MoodMatchResultDto> matches = matchSuggestionsToEmojis(suggestions, emojiService.getAll());
         return new MoodMatchResponseDto(matches);
     }

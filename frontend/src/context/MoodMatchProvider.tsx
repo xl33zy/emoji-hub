@@ -32,6 +32,10 @@ export function MoodMatchProvider({ children }: { children: ReactNode }) {
                     setStatus('rate-limited')
                     return
                 }
+                if (err instanceof ApiError && err.status === 503) {
+                    setStatus('unavailable')
+                    return
+                }
                 setErrorMessage(err instanceof Error ? err.message : 'Unknown error')
                 setStatus('error')
             })

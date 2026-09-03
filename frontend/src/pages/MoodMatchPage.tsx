@@ -82,6 +82,11 @@ export function MoodMatchPage() {
                         Too many requests — try again in a minute.
                     </p>
                 )}
+                {status === 'unavailable' && (
+                    <p className="min-h-[1.5em] py-5 font-mono text-[13px] text-ink-soft">
+                        Mood matching is temporarily unavailable — try again shortly.
+                    </p>
+                )}
                 {status === 'error' && (
                     <p className="min-h-[1.5em] py-5 font-mono text-[13px] text-ink-soft">
                         Something went wrong{errorMessage ? `: ${errorMessage}` : ''}. Try again.

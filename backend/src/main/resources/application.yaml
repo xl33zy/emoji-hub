@@ -7,6 +7,8 @@ server:
 
 emojihub:
   base-url: ${EMOJIHUB_BASE_URL:https://emojihub.yurace.pro/api}
+  connect-timeout: ${EMOJIHUB_CONNECT_TIMEOUT:2s}
+  read-timeout: ${EMOJIHUB_READ_TIMEOUT:5s}
 
 cors:
   allowed-origins: ${ALLOWED_ORIGIN:http://localhost:5173}
@@ -15,3 +17,5 @@ gemini:
   base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta}
   api-key: ${GEMINI_API_KEY:}
   model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+  connect-timeout: ${GEMINI_CONNECT_TIMEOUT:3s}
+  read-timeout: ${GEMINI_READ_TIMEOUT:15s}

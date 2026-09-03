@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { apiClient } from '../api/client'
+import { apiClient, ApiError } from '../api/client'
 
 interface MoodResponse {
     mood: string
@@ -30,6 +30,10 @@ export function useMood(slug: string | undefined): UseMoodResult {
             .then((data) => setMood(data.mood))
             .catch((err: unknown) => {
                 if (err instanceof DOMException && err.name === 'AbortError') return
+                if (err instanceof ApiError && err.status === 503) {
+                    setError('Mood description is temporarily unavailable. Try again shortly.')
+                    return
+                }
                 setError(err instanceof Error ? err.message : 'Unknown error')
             })
             .finally(() => {

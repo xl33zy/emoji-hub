@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import type { MoodMatchResult } from '../types/moodMatch'
 
-export type MoodMatchStatus = 'idle' | 'loading' | 'success' | 'error' | 'rate-limited'
+export type MoodMatchStatus = 'idle' | 'loading' | 'success' | 'error' | 'rate-limited' | 'unavailable'
 
 export interface MoodMatchContextValue {
     text: string
