@@ -38,7 +38,7 @@ public class EmojiService {
         refreshSnapshot();
     }
 
-    private void refreshSnapshot() {
+    void refreshSnapshot() {
         try {
             List<EmojiDto> emojis = emojiHubClient.getAllEmojis();
             lastKnownGood = emojis;
@@ -49,6 +49,14 @@ public class EmojiService {
     }
 
     private List<EmojiDto> allEmojis() {
+        List<EmojiDto> cached = lastKnownGood;
+        if (cached != null) {
+            return cached;
+        }
+        return fetchLiveAndCache();
+    }
+
+    private List<EmojiDto> fetchLiveAndCache() {
         try {
             List<EmojiDto> emojis = emojiHubClient.getAllEmojis();
             lastKnownGood = emojis;
