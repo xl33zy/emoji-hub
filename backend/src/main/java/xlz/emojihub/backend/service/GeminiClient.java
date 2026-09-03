@@ -20,12 +20,14 @@ public class GeminiClient {
     private static final String MOOD_MATCH_SYSTEM_INSTRUCTION = """
         You are matching a user's described mood, feeling, or context to relevant emoji
         from a public, all-ages emoji catalog. Given the user's text and a list of available
-        emoji categories, suggest 5 to 8 short, common emoji names in English (e.g. "grinning face",
-        "red heart", "fire", "party popper") that best match the mood. Only suggest names you are
-        reasonably confident correspond to real, well-known emoji — do not invent obscure or
-        made-up names. Keep suggestions neutral and family-friendly, avoiding sexual, violent,
-        or otherwise suggestive interpretations even if some emoji have such connotations
-        in casual usage.
+        emoji categories, suggest 5 to 8 emoji. For each one, return its short, common English
+        name (e.g. "grinning face", "red heart", "fire", "party popper") and a one-sentence reason
+        tying it specifically to what the user described. Reasons must be concrete and specific to
+        the user's text — never generic filler like "matches your mood" or "fits the vibe".
+        Only suggest names you are reasonably confident correspond to real, well-known emoji —
+        do not invent obscure or made-up names. Keep suggestions and reasons neutral and
+        family-friendly, avoiding sexual, violent, or otherwise suggestive interpretations even if
+        some emoji have such connotations in casual usage.
         """;
 
     private final RestClient geminiRestClient;
@@ -38,19 +40,26 @@ public class GeminiClient {
         this.objectMapper = objectMapper;
     }
 
-    public List<String> findMoodMatchNames(String text, List<String> categories) {
+    public List<MoodMatchSuggestion> findMoodMatches(String text, List<String> categories) {
         String input = "User's mood/context: \"%s\"\nAvailable emoji categories: %s"
                 .formatted(text, String.join(", ", categories));
 
         Map<String, Object> schema = Map.of(
                 "type", "object",
                 "properties", Map.of(
-                        "names", Map.of(
+                        "suggestions", Map.of(
                                 "type", "array",
-                                "items", Map.of("type", "string")
+                                "items", Map.of(
+                                        "type", "object",
+                                        "properties", Map.of(
+                                                "name", Map.of("type", "string"),
+                                                "reason", Map.of("type", "string")
+                                        ),
+                                        "required", List.of("name", "reason")
+                                )
                         )
                 ),
-                "required", List.of("names")
+                "required", List.of("suggestions")
         );
 
         GeminiInteractionResponse response = geminiRestClient.post()
@@ -75,7 +84,7 @@ public class GeminiClient {
 
         String json = extractText(response.steps());
         try {
-            return objectMapper.readValue(json, MoodMatchNames.class).names();
+            return objectMapper.readValue(json, MoodMatchSuggestions.class).suggestions();
         } catch (JacksonException e) {
             throw new IllegalStateException("Failed to parse Gemini mood-match JSON response", e);
         }

@@ -6,7 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import xlz.emojihub.backend.dto.EmojiDto;
 import xlz.emojihub.backend.dto.MoodDto;
 import xlz.emojihub.backend.dto.MoodMatchResponseDto;
-
+import xlz.emojihub.backend.dto.MoodMatchResultDto;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,20 +38,20 @@ public class MoodService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "text must be at most 300 characters");
         }
 
-        List<String> names = geminiClient.findMoodMatchNames(text, emojiService.getCategories());
-        List<EmojiDto> matches = matchNamesToEmojis(names, emojiService.getAll());
+        List<MoodMatchSuggestion> suggestions = geminiClient.findMoodMatches(text, emojiService.getCategories());
+        List<MoodMatchResultDto> matches = matchSuggestionsToEmojis(suggestions, emojiService.getAll());
         return new MoodMatchResponseDto(matches);
     }
 
-    static List<EmojiDto> matchNamesToEmojis(List<String> names, List<EmojiDto> allEmojis) {
+    static List<MoodMatchResultDto> matchSuggestionsToEmojis(List<MoodMatchSuggestion> suggestions, List<EmojiDto> allEmojis) {
         Map<String, List<EmojiDto>> byDisplayName = allEmojis.stream()
                                                              .collect(Collectors.groupingBy(e -> e.displayName().toLowerCase(Locale.ROOT)));
-        Map<String, EmojiDto> matches = new LinkedHashMap<>();
-        for (String name : names) {
-            List<EmojiDto> found = byDisplayName.get(name.trim().toLowerCase(Locale.ROOT));
+        Map<String, MoodMatchResultDto> matches = new LinkedHashMap<>();
+        for (MoodMatchSuggestion suggestion : suggestions) {
+            List<EmojiDto> found = byDisplayName.get(suggestion.name().trim().toLowerCase(Locale.ROOT));
             if (found != null) {
                 for (EmojiDto emoji : found) {
-                    matches.putIfAbsent(emoji.slug(), emoji);
+                    matches.putIfAbsent(emoji.slug(), new MoodMatchResultDto(emoji, suggestion.reason()));
                 }
             }
         }

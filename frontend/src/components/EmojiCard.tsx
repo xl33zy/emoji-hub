@@ -11,9 +11,10 @@ interface EmojiCardProps {
     categories: string[]
     size?: 'default' | 'large'
     from?: DetailOrigin
+    reason?: string
 }
 
-export function EmojiCard({ emoji, categories, size = 'default', from }: EmojiCardProps) {
+export function EmojiCard({ emoji, categories, size = 'default', from, reason }: EmojiCardProps) {
     const accent = getCategoryAccent(emoji.category, categories)
     const isLarge = size === 'large'
     const { isFavorite, toggleFavorite } = useFavorites()
@@ -67,6 +68,8 @@ export function EmojiCard({ emoji, categories, size = 'default', from }: EmojiCa
             </Link>
 
             <h3 className="mb-2 font-display text-lg font-semibold capitalize tracking-tight text-ink">{emoji.displayName}</h3>
+
+            {reason && <p className="mb-2.5 text-[12.5px] leading-snug text-ink-soft">{reason}</p>}
 
             <div className="mb-3.5 flex flex-col gap-1">
                 <span

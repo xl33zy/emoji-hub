@@ -1,8 +1,7 @@
 package xlz.emojihub.backend.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-record MoodMatchNames(List<String> names) {
+record MoodMatchSuggestion(String name, String reason) {
 }

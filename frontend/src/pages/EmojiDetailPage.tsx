@@ -9,6 +9,13 @@ import { getCategoryAccent } from '../lib/categoryAccent'
 import { CopyButton } from '../components/CopyButton'
 import type { DetailOrigin } from '../types/navigation'
 
+const BACK_NAV: Record<DetailOrigin, { label: string; path: string }> = {
+    home: { label: 'Back to home', path: '/' },
+    catalog: { label: 'Back to catalog', path: '/catalog' },
+    favorites: { label: 'Back to favorites', path: '/favorites' },
+    'mood-match': { label: 'Back to Mood Match', path: '/mood-match' },
+}
+
 export function EmojiDetailPage() {
     const { slug } = useParams<{ slug: string }>()
     const { emoji, loading, notFound, error } = useEmoji(slug)
@@ -24,9 +31,8 @@ export function EmojiDetailPage() {
     const navigate = useNavigate()
 
     const from: DetailOrigin = (location.state as { from?: DetailOrigin } | null)?.from ?? 'catalog'
-    const backLabel =
-        from === 'home' ? 'Back to home' : from === 'favorites' ? 'Back to favorites' : 'Back to catalog'
-    const backFallbackPath = from === 'home' ? '/' : from === 'favorites' ? '/favorites' : '/catalog'
+    const backLabel = BACK_NAV[from].label
+    const backFallbackPath = BACK_NAV[from].path
 
     function handleBack() {
         if (location.key === 'default') {
