@@ -100,8 +100,8 @@ export function EmojiDetailPage() {
                 {backLabel}
             </button>
 
-            <div className="flex flex-wrap gap-12 pb-12">
-                <div className="w-[300px] flex-none">
+            <div className="flex flex-wrap gap-8 pb-12 sm:gap-12">
+                <div className="mx-auto w-[300px] shrink">
                     <div
                         style={{ '--card-accent': accent } as React.CSSProperties}
                         className="rounded-[10px] border-[1.5px] border-line bg-paper-raised p-8 text-center"

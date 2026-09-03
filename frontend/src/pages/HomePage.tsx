@@ -27,7 +27,7 @@ export function HomePage() {
     return (
         <div>
             <section>
-                <div className="mx-auto flex max-w-[1180px] flex-wrap-reverse items-center gap-12 px-4 py-12 sm:px-6 lg:px-8">
+                <div className="mx-auto flex max-w-[1180px] flex-wrap-reverse items-center gap-8 px-4 py-12 sm:gap-12 sm:px-6 lg:px-8">
                     <div className="flex-[1_1_380px]">
                         <p className="mb-3 font-mono text-[13px] text-ink-soft">
                             <span className="text-ink">{stats.total > 0 ? stats.total.toLocaleString('en-US') : '—'}</span>
@@ -56,7 +56,7 @@ export function HomePage() {
                         </div>
                     </div>
 
-                    <div className="w-[300px] flex-none">
+                    <div className="mx-auto w-[300px] shrink">
                         <div className="mb-2 flex items-center justify-between">
                             <span className="font-mono text-[11px] uppercase tracking-wide text-ink-soft">
                                 Emoji of the day
@@ -98,7 +98,7 @@ export function HomePage() {
             </section>
 
             <div className="mx-auto max-w-[1180px] border-y border-line px-4 sm:px-8">
-                <div className="flex divide-x divide-line">
+                <div className="grid grid-cols-2 gap-px bg-line sm:grid-cols-4">
                     <Fact value={stats.total} label="catalogued emoji" loading={catalogLoading} />
                     <Fact value={stats.categories} label="categories" loading={catalogLoading} />
                     <Fact value={stats.groups} label="groups" loading={catalogLoading} />
@@ -136,7 +136,7 @@ export function HomePage() {
 function Fact({ value, label, loading }: { value: number; label: string; loading: boolean }) {
     if (loading) {
         return (
-            <div className="flex-1 px-5 py-4">
+            <div className="bg-paper px-5 py-4">
                 <Skeleton className="h-8 w-16" />
                 <Skeleton className="mt-2 h-3 w-24" />
             </div>
@@ -144,7 +144,7 @@ function Fact({ value, label, loading }: { value: number; label: string; loading
     }
 
     return (
-        <div className="flex-1 px-5 py-4 motion-safe:animate-fade-in">
+        <div className="bg-paper px-5 py-4 motion-safe:animate-fade-in">
             <span className="block font-mono text-2xl tabular-nums text-ink">
                 {value.toLocaleString('en-US')}
             </span>
