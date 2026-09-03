@@ -7,16 +7,45 @@
     --color-ink-soft: #63665A;
     --color-line: #D6D8C7;
 
-    --color-accent-crimson: #C0301F;
-    --color-accent-teal: #1B6E63;
-    --color-accent-ochre: #B9800E;
-    --color-accent-indigo: #33507D;
-    --color-accent-rose: #A03A57;
+    --color-accent-crimson: #c7554a;
+    --color-accent-teal: #3e756f;
+    --color-accent-ochre: #b69045;
+    --color-accent-indigo: #4a6288;
+    --color-accent-rose: #9f4f66;
+
+    --mood-field-from: var(--color-accent-indigo);
+    --mood-field-to: color-mix(in srgb, var(--color-accent-indigo) 35%, var(--color-paper-raised));
 
     --font-display: 'Petrona', ui-serif, Georgia, serif;
     --font-index: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Work Sans', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+    --animate-thinking-dot: thinking-dot 1.4s ease-in-out infinite;
+    --animate-fav-pop: fav-pop 260ms ease-out;
+    --animate-fade-in: fade-in 300ms ease-out;
+}
+
+@keyframes thinking-dot {
+    0%, 80%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    40% {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes fav-pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.28); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 [data-theme="dark"] {
@@ -26,11 +55,14 @@
     --color-ink-soft: #9A9C8E;
     --color-line: #2E3235;
 
-    --color-accent-crimson: #E2624F;
-    --color-accent-teal: #3FA692;
-    --color-accent-ochre: #D9A233;
-    --color-accent-indigo: #7292C4;
-    --color-accent-rose: #C6708A;
+    --color-accent-crimson: #e07363;
+    --color-accent-teal: #5ca899;
+    --color-accent-ochre: #d7ae5b;
+    --color-accent-indigo: #809ac2;
+    --color-accent-rose: #c57f94;
+
+    --mood-field-from: var(--color-accent-ochre);
+    --mood-field-to: var(--color-accent-rose);
 }
 
 body {

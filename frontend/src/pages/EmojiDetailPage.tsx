@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom'
 import { useEmoji } from '../hooks/useEmoji'
 import { useMood } from '../hooks/useMood'
@@ -7,6 +8,7 @@ import { useToast } from '../hooks/useToast'
 import { useFavorites } from '../hooks/useFavorites'
 import { getCategoryAccent } from '../lib/categoryAccent'
 import { CopyButton } from '../components/CopyButton'
+import { ThinkingDots } from '../components/ThinkingDots'
 import type { DetailOrigin } from '../types/navigation'
 
 const BACK_NAV: Record<DetailOrigin, { label: string; path: string }> = {
@@ -27,6 +29,7 @@ export function EmojiDetailPage() {
     })
     const { showToast } = useToast()
     const { isFavorite, toggleFavorite } = useFavorites()
+    const [popping, setPopping] = useState(false)
     const location = useLocation()
     const navigate = useNavigate()
 
@@ -73,6 +76,13 @@ export function EmojiDetailPage() {
         )
     }
 
+    const currentEmoji = emoji
+
+    function handleFavClick() {
+        toggleFavorite(currentEmoji.slug)
+        setPopping(true)
+    }
+
     const accent = getCategoryAccent(emoji.category, categories)
     const favorited = isFavorite(emoji.slug)
     const related = sameCategoryEmojis.filter((e) => e.slug !== emoji.slug).slice(0, 4)
@@ -110,10 +120,11 @@ export function EmojiDetailPage() {
                             </CopyButton>
                             <button
                                 type="button"
-                                onClick={() => toggleFavorite(emoji.slug)}
+                                onClick={handleFavClick}
+                                onAnimationEnd={() => setPopping(false)}
                                 aria-pressed={favorited}
                                 aria-label={`${favorited ? 'Remove from favorites' : 'Add to favorites'}: ${emoji.displayName}`}
-                                className={`p-1 transition-colors hover:text-accent-crimson ${favorited ? 'text-accent-crimson' : 'text-ink-soft'}`}
+                                className={`p-1 transition-colors hover:text-accent-crimson ${popping ? 'motion-safe:animate-fav-pop' : ''} ${favorited ? 'text-accent-crimson' : 'text-ink-soft'}`}
                             >
                                 <svg
                                     viewBox="0 0 24 24"
@@ -169,7 +180,11 @@ export function EmojiDetailPage() {
                         className="mb-8 rounded-r-[8px] border-l-[3px] bg-paper p-4"
                     >
                         <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-ink-soft">Mood</p>
-                        {moodLoading && <p className="text-[15px] text-ink-soft">Generating mood description…</p>}
+                        {moodLoading && (
+                            <p className="text-[15px] text-ink-soft">
+                                <ThinkingDots label="Generating mood description" />
+                            </p>
+                        )}
                         {moodError && <p className="text-[15px] text-accent-crimson">Failed to load mood description: {moodError}</p>}
                         {!moodLoading && !moodError && mood && <p className="text-[15px] text-ink">{mood}</p>}
                     </div>

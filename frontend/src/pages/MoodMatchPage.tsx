@@ -2,6 +2,7 @@ import { PageIntro } from '../components/PageIntro'
 import { EmojiCard } from '../components/EmojiCard'
 import { useCategories } from '../hooks/useCategories'
 import { useMoodMatch } from '../hooks/useMoodMatch'
+import { ThinkingDots } from '../components/ThinkingDots'
 
 const EXAMPLES = [
     'stressed before a big deadline',
@@ -34,7 +35,13 @@ export function MoodMatchPage() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="e.g. wired after too much coffee and behind on everything"
-                    className="min-h-[104px] w-full resize-y rounded-[8px] border border-line bg-paper-raised px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft focus-visible:border-ink-soft focus-visible:outline-none"
+                    style={{
+                        backgroundImage:
+                            'linear-gradient(var(--color-paper-raised), var(--color-paper-raised)), linear-gradient(to right, var(--mood-field-from), var(--mood-field-to))',
+                        backgroundOrigin: 'border-box',
+                        backgroundClip: 'padding-box, border-box',
+                    }}
+                    className="min-h-[104px] w-full resize-y rounded-[8px] border-2 border-transparent bg-paper-raised px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-soft transition-shadow duration-150 focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--mood-field-from)_18%,transparent)] focus-visible:outline-none"
                 />
 
                 <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
@@ -46,7 +53,7 @@ export function MoodMatchPage() {
                                     key={example}
                                     type="button"
                                     onClick={() => setText(example)}
-                                    className="rounded-full border border-line px-3.5 py-1.5 font-body text-[13.5px] text-ink-soft transition-colors hover:border-ink-soft hover:text-ink"
+                                    className="rounded-full border border-line px-3.5 py-1.5 font-body text-[13.5px] text-ink-soft transition-colors hover:border-accent-indigo hover:bg-[color-mix(in_srgb,var(--color-accent-indigo)_10%,transparent)] hover:text-accent-indigo focus-visible:border-accent-indigo focus-visible:bg-[color-mix(in_srgb,var(--color-accent-indigo)_10%,transparent)] focus-visible:text-accent-indigo focus-visible:outline-none"
                                 >
                                     {example}
                                 </button>
@@ -66,7 +73,9 @@ export function MoodMatchPage() {
 
             <div className="pt-2">
                 {status === 'loading' && (
-                    <p className="min-h-[1.5em] py-5 font-mono text-[13px] text-ink-soft">Looking through the catalog…</p>
+                    <p className="min-h-[1.5em] py-5 font-mono text-[13px] text-ink-soft">
+                        <ThinkingDots label="Looking through the catalog" />
+                    </p>
                 )}
                 {status === 'rate-limited' && (
                     <p className="min-h-[1.5em] py-5 font-mono text-[13px] text-ink-soft">

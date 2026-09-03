@@ -6,10 +6,12 @@ import { SearchBar } from '../components/SearchBar'
 import { SortControls } from '../components/SortControls'
 import { CategoryFilter } from '../components/CategoryFilter'
 import { EmojiCard } from '../components/EmojiCard'
+import { EmojiCardSkeleton } from '../components/EmojiCardSkeleton'
 import type { SortOption } from '../types/emoji'
 import { PageIntro } from '../components/PageIntro'
 
 const PAGE_SIZE = 30
+const SKELETON_COUNT = 12
 
 export function CatalogPage() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -36,6 +38,7 @@ export function CatalogPage() {
     }
 
     const visibleEmojis = emojis.slice(0, visibleCount)
+    const showSkeleton = loading && emojis.length === 0
 
     return (
         <div className="mx-auto max-w-[1180px] px-4 py-10 sm:px-8">
@@ -57,15 +60,23 @@ export function CatalogPage() {
 
             {error && <p className="mt-8 text-accent-crimson">Failed to load emojis: {error}</p>}
 
-            {!error && (
+            {!error && showSkeleton && (
                 <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(228px,1fr))] gap-[18px]">
+                    {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                        <EmojiCardSkeleton key={i} />
+                    ))}
+                </div>
+            )}
+
+            {!error && !showSkeleton && (
+                <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(228px,1fr))] gap-[18px] motion-safe:animate-fade-in">
                     {visibleEmojis.map((emoji) => (
                         <EmojiCard key={emoji.slug} emoji={emoji} categories={categories} from="catalog" />
                     ))}
                 </div>
             )}
 
-            {loading && <p className="mt-6 text-ink-soft">Loading…</p>}
+            {loading && !showSkeleton && <p className="mt-6 text-ink-soft">Loading…</p>}
 
             {!loading && !error && visibleCount < emojis.length && (
                 <div className="mt-8 flex flex-col items-center gap-3.5 text-center">

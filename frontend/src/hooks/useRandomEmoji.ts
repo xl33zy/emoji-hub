@@ -13,9 +13,12 @@ function readCached(): Emoji | null {
     }
 }
 
+const MIN_SPIN_MS = 500
+
 interface UseRandomEmojiResult {
     emoji: Emoji | null
     loading: boolean
+    spinning: boolean
     error: string | null
     reroll: () => void
 }
@@ -23,6 +26,7 @@ interface UseRandomEmojiResult {
 export function useRandomEmoji(): UseRandomEmojiResult {
     const [emoji, setEmoji] = useState<Emoji | null>(readCached)
     const [loading, setLoading] = useState(emoji === null)
+    const [spinning, setSpinning] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [requestId, setRequestId] = useState(0)
 
@@ -32,10 +36,14 @@ export function useRandomEmoji(): UseRandomEmojiResult {
         const controller = new AbortController()
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLoading(true)
+        setSpinning(true)
         setError(null)
-        apiClient
-            .get<Emoji>('/api/emojis/random', controller.signal)
-            .then((result) => {
+
+        const minSpinDelay = new Promise<void>((resolve) => setTimeout(resolve, MIN_SPIN_MS))
+        const fetchEmoji = apiClient.get<Emoji>('/api/emojis/random', controller.signal)
+
+        Promise.all([fetchEmoji, minSpinDelay])
+            .then(([result]) => {
                 setEmoji(result)
                 sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result))
             })
@@ -44,7 +52,10 @@ export function useRandomEmoji(): UseRandomEmojiResult {
                 setError(err instanceof Error ? err.message : 'Unknown error')
             })
             .finally(() => {
-                if (!controller.signal.aborted) setLoading(false)
+                if (!controller.signal.aborted) {
+                    setLoading(false)
+                    setSpinning(false)
+                }
             })
         return () => controller.abort()
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,5 +65,5 @@ export function useRandomEmoji(): UseRandomEmojiResult {
         setRequestId((id) => id + 1)
     }
 
-    return { emoji, loading, error, reroll }
+    return { emoji, loading, spinning, error, reroll }
 }

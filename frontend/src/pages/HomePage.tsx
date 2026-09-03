@@ -4,12 +4,16 @@ import { useEmojis } from '../hooks/useEmojis'
 import { useCategories } from '../hooks/useCategories'
 import { useRandomEmoji } from '../hooks/useRandomEmoji'
 import { EmojiCard } from '../components/EmojiCard'
+import { EmojiCardSkeleton } from '../components/EmojiCardSkeleton'
+import { Skeleton } from '../components/Skeleton'
 import { getCategoryAccent } from '../lib/categoryAccent'
 
 export function HomePage() {
-    const { emojis } = useEmojis({})
-    const { categories } = useCategories()
-    const { emoji: specimen, loading: specimenLoading, error: specimenError, reroll } = useRandomEmoji()
+    const { emojis, loading: emojisLoading } = useEmojis({})
+    const { categories, loading: categoriesLoading } = useCategories()
+    const { emoji: specimen, loading: specimenLoading, error: specimenError, spinning, reroll } = useRandomEmoji()
+
+    const catalogLoading = emojisLoading || categoriesLoading
 
     const stats = useMemo(() => {
         return {
@@ -70,7 +74,7 @@ export function HomePage() {
                                     strokeWidth={2}
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="h-4 w-4"
+                                    className={`h-4 w-4 ${spinning ? 'motion-safe:animate-spin' : ''}`}
                                 >
                                     <path d="M17 2.1l4 4-4 4" />
                                     <path d="M3 12.7V12a9 9 0 0 1 15-6.7l3-.2" />
@@ -80,12 +84,14 @@ export function HomePage() {
                             </button>
                         </div>
 
-                        {specimenLoading && <p className="text-sm text-ink-soft">Loading…</p>}
+                        {specimenLoading && <EmojiCardSkeleton size="large" />}
                         {specimenError && (
                             <p className="text-sm text-accent-crimson">Failed to load: {specimenError}</p>
                         )}
                         {!specimenLoading && !specimenError && specimen && (
-                            <EmojiCard emoji={specimen} categories={categories} size="large" from="home" />
+                            <div key={specimen.slug} className="motion-safe:animate-fade-in">
+                                <EmojiCard emoji={specimen} categories={categories} size="large" from="home" />
+                            </div>
                         )}
                     </div>
                 </div>
@@ -93,37 +99,54 @@ export function HomePage() {
 
             <div className="mx-auto max-w-[1180px] border-y border-line px-4 sm:px-8">
                 <div className="flex divide-x divide-line">
-                    <Fact value={stats.total} label="catalogued emoji" />
-                    <Fact value={stats.categories} label="categories" />
-                    <Fact value={stats.groups} label="groups" />
-                    <Fact value={stats.multiCodepoint} label="tone & gender variants" />
+                    <Fact value={stats.total} label="catalogued emoji" loading={catalogLoading} />
+                    <Fact value={stats.categories} label="categories" loading={catalogLoading} />
+                    <Fact value={stats.groups} label="groups" loading={catalogLoading} />
+                    <Fact value={stats.multiCodepoint} label="tone & gender variants" loading={catalogLoading} />
                 </div>
             </div>
 
             <section className="mx-auto max-w-[1180px] px-4 py-8 sm:px-8">
                 <p className="mb-3 text-xs text-ink-soft">Browse by category</p>
-                <div className="flex flex-wrap gap-2">
-                    {categories.map((cat) => (
-                        <Link
-                            key={cat}
-                            to={`/catalog?category=${encodeURIComponent(cat)}`}
-                            style={{ borderColor: getCategoryAccent(cat, categories) }}
-                            className="rounded-full border bg-paper-raised px-3.5 py-1.5 text-[13.5px] text-ink-soft transition-colors hover:text-ink"
-                        >
-                            {cat}
-                        </Link>
-                    ))}
-                </div>
+                {categoriesLoading ? (
+                    <div className="flex flex-wrap gap-2">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <Skeleton key={i} className="h-[34px] w-24 rounded-full" />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex flex-wrap gap-2 motion-safe:animate-fade-in">
+                        {categories.map((cat) => (
+                            <Link
+                                key={cat}
+                                to={`/catalog?category=${encodeURIComponent(cat)}`}
+                                style={{ borderColor: getCategoryAccent(cat, categories) }}
+                                className="rounded-full border bg-paper-raised px-3.5 py-1.5 text-[13.5px] text-ink-soft transition-colors hover:text-ink"
+                            >
+                                {cat}
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </section>
         </div>
     )
 }
 
-function Fact({ value, label }: { value: number; label: string }) {
+function Fact({ value, label, loading }: { value: number; label: string; loading: boolean }) {
+    if (loading) {
+        return (
+            <div className="flex-1 px-5 py-4">
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="mt-2 h-3 w-24" />
+            </div>
+        )
+    }
+
     return (
-        <div className="flex-1 px-5 py-4">
+        <div className="flex-1 px-5 py-4 motion-safe:animate-fade-in">
             <span className="block font-mono text-2xl tabular-nums text-ink">
-                {value > 0 ? value.toLocaleString('en-US') : '—'}
+                {value.toLocaleString('en-US')}
             </span>
             <span className="mt-0.5 block text-[12.5px] text-ink-soft">{label}</span>
         </div>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Emoji } from '../types/emoji'
 import { getCategoryAccent } from '../lib/categoryAccent'
@@ -20,6 +21,12 @@ export function EmojiCard({ emoji, categories, size = 'default', from, reason }:
     const { isFavorite, toggleFavorite } = useFavorites()
     const { showToast } = useToast()
     const favorited = isFavorite(emoji.slug)
+    const [popping, setPopping] = useState(false)
+
+    function handleFavClick() {
+        toggleFavorite(emoji.slug)
+        setPopping(true)
+    }
 
     return (
         <article
@@ -40,10 +47,11 @@ export function EmojiCard({ emoji, categories, size = 'default', from, reason }:
                 </CopyButton>
                 <button
                     type="button"
-                    onClick={() => toggleFavorite(emoji.slug)}
+                    onClick={handleFavClick}
+                    onAnimationEnd={() => setPopping(false)}
                     aria-pressed={favorited}
                     aria-label={`${favorited ? 'Remove from favorites' : 'Add to favorites'}: ${emoji.displayName}`}
-                    className={`p-0.5 transition-colors hover:text-accent-crimson ${favorited ? 'text-accent-crimson' : 'text-ink-soft'}`}
+                    className={`p-0.5 transition-colors hover:text-accent-crimson ${popping ? 'motion-safe:animate-fav-pop' : ''} ${favorited ? 'text-accent-crimson' : 'text-ink-soft'}`}
                 >
                     <svg
                         viewBox="0 0 24 24"
