@@ -1,6 +1,5 @@
 package xlz.emojihub.backend.service;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -26,7 +25,6 @@ public class EmojiHubClient {
         this.emojiHubRestClient = emojiHubRestClient;
     }
 
-    @Cacheable("emojiList")
     public List<EmojiDto> getAllEmojis() {
         List<EmojiHubApiEmoji> raw = emojiHubRestClient.get()
                                                        .uri("/all")

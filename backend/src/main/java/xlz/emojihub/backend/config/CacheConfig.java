@@ -15,16 +15,12 @@ import java.util.List;
 public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCache emojiListCache = new CaffeineCache("emojiList",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(Duration.ofHours(1))
-                        .build());
         CaffeineCache moodDescriptionCache = new CaffeineCache("moodDescription",
                 Caffeine.newBuilder()
                         .expireAfterWrite(Duration.ofDays(7))
                         .build());
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(emojiListCache, moodDescriptionCache));
+        manager.setCaches(List.of(moodDescriptionCache));
         return manager;
     }
 }

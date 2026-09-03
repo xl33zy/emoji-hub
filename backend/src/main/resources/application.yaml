@@ -9,6 +9,7 @@ emojihub:
   base-url: ${EMOJIHUB_BASE_URL:https://emojihub.yurace.pro/api}
   connect-timeout: ${EMOJIHUB_CONNECT_TIMEOUT:2s}
   read-timeout: ${EMOJIHUB_READ_TIMEOUT:8s}
+  cache-refresh-interval: ${EMOJIHUB_CACHE_REFRESH_INTERVAL:PT50M}
 
 cors:
   allowed-origins: ${ALLOWED_ORIGIN:http://localhost:5173}

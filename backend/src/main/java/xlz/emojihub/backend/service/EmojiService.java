@@ -1,7 +1,9 @@
 package xlz.emojihub.backend.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
@@ -21,6 +23,29 @@ public class EmojiService {
 
     public EmojiService(EmojiHubClient emojiHubClient) {
         this.emojiHubClient = emojiHubClient;
+    }
+
+    @PostConstruct
+    void warmUpCache() {
+        refreshSnapshot();
+    }
+
+    @Scheduled(
+            initialDelayString = "${emojihub.cache-refresh-interval}",
+            fixedRateString = "${emojihub.cache-refresh-interval}"
+    )
+    void scheduledRefresh() {
+        refreshSnapshot();
+    }
+
+    private void refreshSnapshot() {
+        try {
+            List<EmojiDto> emojis = emojiHubClient.getAllEmojis();
+            lastKnownGood = emojis;
+            log.info("Emoji snapshot refreshed successfully ({} items)", emojis.size());
+        } catch (RestClientException e) {
+            log.warn("Failed to refresh emoji snapshot, keeping previous snapshot: {}", e.getMessage());
+        }
     }
 
     private List<EmojiDto> allEmojis() {
