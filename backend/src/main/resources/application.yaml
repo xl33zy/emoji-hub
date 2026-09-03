@@ -8,7 +8,7 @@ server:
 emojihub:
   base-url: ${EMOJIHUB_BASE_URL:https://emojihub.yurace.pro/api}
   connect-timeout: ${EMOJIHUB_CONNECT_TIMEOUT:2s}
-  read-timeout: ${EMOJIHUB_READ_TIMEOUT:5s}
+  read-timeout: ${EMOJIHUB_READ_TIMEOUT:8s}
 
 cors:
   allowed-origins: ${ALLOWED_ORIGIN:http://localhost:5173}

@@ -7,6 +7,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import xlz.emojihub.backend.dto.EmojiDto;
@@ -53,6 +54,19 @@ class EmojiServiceTest {
         when(emojiHubClient.getAllEmojis())
                 .thenReturn(emojis)
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+
+        EmojiService service = new EmojiService(emojiHubClient);
+
+        assertThat(service.getAll()).isEqualTo(emojis);
+        assertThat(service.getAll()).isEqualTo(emojis);
+    }
+
+    @Test
+    void fallsBackToLastKnownGoodOnGenericRestClientException() {
+        List<EmojiDto> emojis = List.of(sampleEmoji("grinning-face-smileys-and-people"));
+        when(emojiHubClient.getAllEmojis())
+                .thenReturn(emojis)
+                .thenThrow(new RestClientException("Error while extracting response", new java.io.IOException("closed")));
 
         EmojiService service = new EmojiService(emojiHubClient);
 

@@ -3,8 +3,8 @@ package xlz.emojihub.backend.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
 import xlz.emojihub.backend.dto.EmojiDto;
 import java.util.Comparator;
@@ -28,7 +28,9 @@ public class EmojiService {
             List<EmojiDto> emojis = emojiHubClient.getAllEmojis();
             lastKnownGood = emojis;
             return emojis;
-        } catch (ResourceAccessException | HttpServerErrorException e) {
+        } catch (HttpClientErrorException e) {
+            throw e;
+        } catch (RestClientException e) {
             List<EmojiDto> fallback = lastKnownGood;
             if (fallback != null) {
                 log.warn("EmojiHub unavailable, serving last known good snapshot ({} items): {}",

@@ -3,8 +3,8 @@ package xlz.emojihub.backend.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.server.ResponseStatusException;
 import xlz.emojihub.backend.dto.EmojiDto;
 import xlz.emojihub.backend.dto.MoodDto;
@@ -33,7 +33,9 @@ public class MoodService {
         try {
             String mood = geminiClient.describeMood(emoji.displayName(), emoji.emoji());
             return new MoodDto(mood);
-        } catch (ResourceAccessException | HttpServerErrorException e) {
+        } catch (HttpClientErrorException e) {
+            throw e;
+        } catch (RestClientException e) {
             log.warn("Gemini unavailable while describing mood for slug={}: {}", slug, e.getMessage());
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Mood description is temporarily unavailable, please try again shortly", e);
@@ -51,7 +53,9 @@ public class MoodService {
         List<MoodMatchSuggestion> suggestions;
         try {
             suggestions = geminiClient.findMoodMatches(text, emojiService.getCategories());
-        } catch (ResourceAccessException | HttpServerErrorException e) {
+        } catch (HttpClientErrorException e) {
+            throw e;
+        } catch (RestClientException e) {
             log.warn("Gemini unavailable while matching mood: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Mood matching is temporarily unavailable, please try again shortly", e);
