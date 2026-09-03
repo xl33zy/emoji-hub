@@ -48,7 +48,7 @@ VITE_API_BASE_URL=http://localhost:8080
 
 ## How it was built
 
-Development went in vertical slices: each slice shipped a full feature end to end (backend + frontend) instead of building all of the backend first. Both skeletons were deployed on day one, before any business logic, specifically to catch CORS/Docker/hosting issues early rather than late.
+Development went in vertical slices: each slice shipped a full feature end to end (backend + frontend). Both skeletons were deployed on day one, before any business logic, specifically to catch CORS/Docker/hosting issues early rather than late.
 
 ## Notable decisions
 
@@ -60,20 +60,18 @@ Development went in vertical slices: each slice shipped a full feature end to en
 ## Trade-offs
 
 - **localStorage instead of a database/auth**: favorites don't need to survive a re-install or sync across devices for this scope.
-- **In-memory caching instead of Redis**: single instance, no need for a shared cache.
+- **In-memory caching**: single instance, no need for a shared cache.
 - **In-memory rate limiting instead of a distributed one**: same reason, and it's enough to protect the free-tier Gemini quota.
 - **Client-side "Load more" instead of server pagination**: the full emoji list is already cached in memory; paginating server-side would add complexity without a real benefit here.
-- **Render free tier instead of a paid host**: acceptable for a project like this, the cold-start trade-off is called out above.
 
 ## Known limitations
 
 - Backend cold start on Render's free tier (first request can be slow).
 - Gemini free tier has request limits, mitigated by caching mood responses per slug, but not unlimited.
 - Favorites live in `localStorage`, so they don't sync across devices/browsers.
-- A handful of emoji names contain unusual characters. That's how EmojiHub's source data is, not a bug in this app.
 
 ## Tech stack
 
 **Backend: Spring Boot 4 (Java 21), Gradle.** `RestClient` for outbound calls to EmojiHub and Gemini. The emoji catalog lives in an eager in-memory snapshot (warmed on startup, refreshed on a schedule); Gemini's mood responses are cached separately with Caffeine, since they're keyed by slug and don't need refreshing. No database was needed given the scope.
 
-**Frontend: Vite + React + TypeScript, Tailwind v4.** Data fetching is a thin `fetch` wrapper rather than React Query/SWR: every request is used in exactly one place, there's no cross-component cache-sharing need, and the backend already caches the underlying data, a fetching library would add abstraction without solving a real problem here. Catalog state (search/sort/category) lives in the URL via `useSearchParams` rather than component state, so filters survive a refresh or a shared link.
+**Frontend: Vite + React + TypeScript, Tailwind v4.** Data fetching is a thin `fetch` wrapper: every request is used in exactly one place. Catalog state (search/sort/category) lives in the URL via `useSearchParams`, so filters survive a refresh or a shared link.
