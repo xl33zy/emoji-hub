@@ -60,4 +60,8 @@ public class EmojiService {
                              .sorted()
                              .toList();
     }
+
+    public List<EmojiDto> getAll() {
+        return emojiHubClient.getAllEmojis();
+    }
 }
